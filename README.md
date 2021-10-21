@@ -14,15 +14,13 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ## Instructors
 
-- Johannes Halkenhaeusser ([website](http://halkenhaeusser.github.io/), [twitter](https://twitter.com/halkenhaeusser))
+- Johannes Halkenhaeusser ([Github](http://halkenhaeusser.github.io/), [twitter](https://twitter.com/halkenhaeusser))
 - Carlo Gress ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
 
 
 ## Further resources
 
-- [dplyr overview at dplyr.tidyverse.org](https://dplyr.tidyverse.org/)
-- [Hands-on dplyr tutorial by Data School on YouTube](https://www.youtube.com/watch?v=jWjqLW-u3hc)
-- [R for Data Science book - part on data wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
+- 
 
 
 ## License
