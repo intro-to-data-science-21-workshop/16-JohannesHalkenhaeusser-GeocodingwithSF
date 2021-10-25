@@ -15,7 +15,7 @@ This repository provides materials for a session that is part of the [I2DS Tools
 ## Instructors
 
 - Johannes Halkenhaeusser ([Github](http://halkenhaeusser.github.io/), [twitter](https://twitter.com/halkenhaeusser))
-- Carlo Gress ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+- Carlo Gress ([Github](https://github.com/carlo-gress), [twitter](https://twitter.com/KermitTheFrog))
 
 
 ## Further resources
