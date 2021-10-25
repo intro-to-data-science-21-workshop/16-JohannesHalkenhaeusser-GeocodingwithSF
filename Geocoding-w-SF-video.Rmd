@@ -1,0 +1,94 @@
+---
+title: "Geocoding with SF_Video"
+author: "Johannes M. Halkenhaeusser"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r Packages}
+
+library(tidyverse)
+
+#might require install.package("sf")
+library(sf)
+library(tmap)
+library(legislatoR)
+library(tm)
+
+```
+
+We will get some data that includes spatial information.
+For our sample run we will use the legislator data base from Spain
+
+
+```{r}
+core_aut <- get_core(legislature = 'aut')
+pol_aut <- get_political(legislature = 'aut')
+
+head(core_aut)
+
+#the birthplace and deathplace geocodes are not separated out yet. 
+core_aut <- core_aut %>%
+  separate(birthplace, into = c('bp_lat', 'bp_long'), sep = ",") %>%
+  separate(deathplace, into = c('dp_lat', 'dp_long'), sep = ",")
+
+head(core_aut, 3)
+
+```
+
+
+```{r Open spanish}
+
+# https://data-synergis.opendata.arcgis.com/datasets/SynerGIS::bezirksgrenzen-1250-000/explore?location=47.092207%2C14.608863%2C7.56
+
+#read in shapefile
+oesterreich <- st_read("/Users/johannes/Downloads/Bezirksgrenzen_1_250.000/Bezirke_250.shp")
+
+#first map
+qtm(oesterreich)
+
+#drop NAs in geo data
+core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_lat")))
+
+#figure out the crs key
+st_crs(oesterreich)
+
+
+#get the birthplaces as sf 
+birthplaces_geo <- st_as_sf(core_aut_nona, 
+                      coords = c(x = "bp_long", y = "bp_lat"), 
+                      crs = 4326)
+
+#get the deathplaces as sf 
+deathplaces_geo <- st_as_sf(core_aut_nona, 
+                      coords = c(x = "dp_long", y = "dp_lat"), 
+                      crs = 4326)
+
+geopoints <- cbind(birthplaces_geo, deathplaces_geo)
+
+
+#join birth and deathplaces with the austria map
+results_birthplace <- st_join(birthplaces_geo, oesterreich, join = st_within)
+results_deathplace <- st_join(deathplaces_geo, oesterreich, join = st_within)
+
+results_geopoints <- st_join(geopoints, oesterreich, join = st_within)
+#draw the austria maps
+tm_shape(oesterreich) +
+tm_fill() +
+tm_shape(results_geopoints) +
+tm_bubbles(col = "red", size = .025)
+
+```
+
+
+
