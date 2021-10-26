@@ -24,6 +24,7 @@ library(sf)
 library(tmap)
 library(legislatoR)
 library(tm)
+library(OpenStreetMap)
 
 ```
 
@@ -40,14 +41,28 @@ head(core_aut)
 #the birthplace and deathplace geocodes are not separated out yet. 
 core_aut <- core_aut %>%
   separate(birthplace, into = c('bp_lat', 'bp_long'), sep = ",") %>%
-  separate(deathplace, into = c('dp_lat', 'dp_long'), sep = ",")
+  separate(deathplace, into = c('dp_lat', 'dp_long'), sep = ",") %>%
+  mutate(bp_lat = parse_number(bp_lat)) %>%
+  mutate(bp_long = parse_number(bp_long)) %>%
+  mutate(dp_lat = parse_number(dp_lat)) %>%
+  mutate(dp_long = parse_number(dp_long))
 
 head(core_aut, 3)
 
 ```
 
+```{r Translate birthplaces}
 
-```{r Open spanish}
+#drop NAs in geo data
+core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_lat")))
+
+
+reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$bp_lat)
+
+
+```
+
+```{r Open Austria}
 
 # https://data-synergis.opendata.arcgis.com/datasets/SynerGIS::bezirksgrenzen-1250-000/explore?location=47.092207%2C14.608863%2C7.56
 
@@ -56,9 +71,6 @@ oesterreich <- st_read("/Users/johannes/Downloads/Bezirksgrenzen_1_250.000/Bezir
 
 #first map
 qtm(oesterreich)
-
-#drop NAs in geo data
-core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_lat")))
 
 #figure out the crs key
 st_crs(oesterreich)
