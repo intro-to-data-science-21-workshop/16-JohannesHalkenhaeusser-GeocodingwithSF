@@ -25,9 +25,33 @@ library(tmap)
 library(legislatoR)
 library(tm)
 library(OpenStreetMap)
+library(rnaturalearth)
 
 ```
+```{r}
 
+
+Hertie_frame <- data_frame(Address = c("Hertie School of Governance, Friedrichstrasse, Berlin, Germany"))
+
+
+Hertie_frame['Geocode_x']<- geocode_OSM(address_hertie)$coords["x"]
+Hertie_frame['Geocode_y']<- geocode_OSM(address_hertie)$coords["y"]
+
+hertie_as_a_point <- st_as_sf(Hertie_frame, coords = c(x = 'Geocode_x', 'Geocode_y'),
+                              crs = 4326)
+#we need some real world data
+data("World")
+
+tmap_mode('plot')
+tm_shape(filter(World, iso_a3 == "DEU"))+
+  tm_fill() +
+  tm_borders() +
+tm_shape(hertie_as_a_point) +
+  tm_bubbles(col = "red", size = .025, labels = c('Hertie'))
+
+## This map is pretty boring and ad-hoc. Let's work with something more advanced. 
+
+```
 We will get some data that includes spatial information.
 For our sample run we will use the legislator data base from Spain
 
@@ -75,7 +99,6 @@ qtm(oesterreich)
 #figure out the crs key
 st_crs(oesterreich)
 
-
 #get the birthplaces as sf 
 birthplaces_geo <- st_as_sf(core_aut_nona, 
                       coords = c(x = "bp_long", y = "bp_lat"), 
@@ -99,9 +122,10 @@ results_geopoints <- st_join(geopoints, oesterreich, join = st_within)
 
 
 #draw the austria maps
+tmap_mode("plot")
 tm_shape(oesterreich) +
   tm_polygons() +
-tm_fill() +
+tm_fill(alpha = 1) +
 tm_shape(results_birthplace) +
 tm_bubbles(col = "red", size = .025)
 
@@ -122,7 +146,7 @@ tm_shape(oesterreich_count) +
               n = 5,
               palette = "Reds",
               id = "PB",
-              title = "How many point were counted in each region") +
+              title = "How many points were counted in each region") +
   tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = TRUE) 
 
 
