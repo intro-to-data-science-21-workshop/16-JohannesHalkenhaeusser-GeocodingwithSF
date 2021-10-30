@@ -7,17 +7,20 @@ __References and Resources used__
   https://r-spatial.github.io/sf/articles/sf1.html
 
 
-- Tutorial on tmap 
-  https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
+- Tutorial on tmap
+  - https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
 
 - Cheat sheet on sf 
+
   https://github.com/rstudio/cheatsheets/blob/master/sf.pdf
 
 
-- __Book on how to use geocoding and R: /n
+- __Book on how to use geocoding and R: 
+
   Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Press.
   https://geocompr.robinlovelace.net/__
 
 
 - Data Source of Austrian shapefiles
+
   https://www.esri-austria.at/service/open-data-und-projektionen-fuer-oesterreich/
