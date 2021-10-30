@@ -7,10 +7,12 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 - Short introduction to sf in R and geocoding
-- Coding exercise geocoding some known data
-- Plotting the points onto a map
-- Getting some more highlights out of it
+- What is geocoding?
+- What is sf?
+- How do they relate?
 - Workshop coding
+  - Basic coding example to plot Hertie onto a map
+  - Using the legislatoR data to plot some maps and use geo-information contained.
 
 
 ### Main learning objectives
@@ -25,8 +27,8 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ## Further resources
 
-- ([Simple Features for R] https://r-spatial.github.io/sf/index.html)
-- ([Geocoding] https://lost-stats.github.io/Geo-Spatial/geocoding.html)
+- [Simple Features for R] (https://r-spatial.github.io/sf/index.html)
+- [Geocoding] (https://lost-stats.github.io/Geo-Spatial/geocoding.html)
 
 
 ## License
