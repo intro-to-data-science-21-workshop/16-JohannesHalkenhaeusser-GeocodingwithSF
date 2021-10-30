@@ -14,7 +14,7 @@ __References and Resources used__
   https://github.com/rstudio/cheatsheets/blob/master/sf.pdf
 
 
-- __Book on how to use geocoding and R
+- __Book on how to use geocoding and R: /n
   Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Press.
   https://geocompr.robinlovelace.net/__
 
