@@ -18,17 +18,19 @@ This repository provides materials for a session that is part of the [I2DS Tools
 ### Main learning objectives
 - You should know what sf is
 - You should understand what (reverse) geocoding is
+- You should come out understanding which few lines of code are needed to plot a map
 
 ## Instructors
 
-- Johannes Halkenhaeusser ([Github](http://halkenhaeusser.github.io/), [twitter](https://twitter.com/halkenhaeusser))
-- Carlo Gress ([Github](https://github.com/carlo-gress), [twitter](https://twitter.com/carlo_gress))
+- Johannes Halkenhaeusser [Github](http://halkenhaeusser.github.io/), [twitter](https://twitter.com/halkenhaeusser)
+- Carlo Gress [Github](https://github.com/carlo-gress), [twitter](https://twitter.com/carlo_gress)
 
 
 ## Further resources
 
-- [Simple Features for R] (https://r-spatial.github.io/sf/index.html)
-- [Geocoding] (https://lost-stats.github.io/Geo-Spatial/geocoding.html)
+- [Simple Features for R](https://r-spatial.github.io/sf/index.html)
+- [Geocoding](https://lost-stats.github.io/Geo-Spatial/geocoding.html)
+- [Our own resources](Resources used and recommended.md)
 
 
 ## License
