@@ -91,8 +91,12 @@ reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$b
 
 # https://data-synergis.opendata.arcgis.com/datasets/SynerGIS::bezirksgrenzen-1250-000/explore?location=47.092207%2C14.608863%2C7.56
 
-#read in shapefile
-oesterreich <- st_read("/Users/johannes/Downloads/Bezirksgrenzen_1_250.000/Bezirke_250.shp")
+# https://www.infoworld.com/article/3505897/how-to-do-spatial-analysis-in-r-with-sf.html
+
+#
+
+#read in shapefile 
+oesterreich <- st_read("data/Bezirke_250.shp")
 
 #first map
 qtm(oesterreich)
