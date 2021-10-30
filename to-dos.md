@@ -18,8 +18,8 @@ What do we want to achieve in the video?
   
  
 # Things to do
- * Make presentation for intro
- * Code example for video
+ * Make presentation for intro [x]
+ * Code example for video [x]
  * Record video 
- * Process/edit video
- * Sample code for workshop 
+ * Process/edit video 
+ * Sample code for workshop [x] 
