@@ -30,7 +30,7 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 - [Simple Features for R](https://r-spatial.github.io/sf/index.html)
 - [Geocoding](https://lost-stats.github.io/Geo-Spatial/geocoding.html)
-- [Our own resources](Resources used and recommended.md)
+- [Resources we used and recommend](https://github.com/intro-to-data-science-21-workshop/16-JohannesHalkenhaeusser-GeocodingwithSF/blob/main/Resources%20used%20and%20recommended.md)
 
 
 ## License
