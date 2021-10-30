@@ -28,17 +28,18 @@ library(OpenStreetMap)
 library(rnaturalearth)
 
 ```
+
 ```{r}
+#Let's say I want to find my home in relationship to Hertie
+#I can give OSM my relative address and Hertie's address
+Geocoded_Frame <- geocode_OSM(c("Hertie School of Governance, Friedrichstrasse, Berlin, Germany",
+                                "Rieslingstrasse, 69514 Laudenbach, Germany"), 
+                              as.sf= T,
+                              projection = 4326)
 
+#how far away from home am I?
+st_distance(Geocoded_Frame$point[1], Geocoded_Frame$point[2])
 
-Hertie_frame <- data_frame(Address = c("Hertie School of Governance, Friedrichstrasse, Berlin, Germany"))
-
-
-Hertie_frame['Geocode_x']<- geocode_OSM(address_hertie)$coords["x"]
-Hertie_frame['Geocode_y']<- geocode_OSM(address_hertie)$coords["y"]
-
-hertie_as_a_point <- st_as_sf(Hertie_frame, coords = c(x = 'Geocode_x', 'Geocode_y'),
-                              crs = 4326)
 #we need some real world data
 data("World")
 
@@ -46,8 +47,8 @@ tmap_mode('plot')
 tm_shape(filter(World, iso_a3 == "DEU"))+
   tm_fill() +
   tm_borders() +
-tm_shape(hertie_as_a_point) +
-  tm_bubbles(col = "red", size = .025, labels = c('Hertie'))
+tm_shape(Geocoded_Frame) +
+  tm_bubbles(col = "red", size = .025)
 
 ## This map is pretty boring and ad-hoc. Let's work with something more advanced. 
 
