@@ -14,9 +14,9 @@ __References and Resources used__
   https://github.com/rstudio/cheatsheets/blob/master/sf.pdf
 
 
-- Book on how to use geocoding and R
+- __Book on how to use geocoding and R
   Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Press.
-  https://geocompr.robinlovelace.net/
+  https://geocompr.robinlovelace.net/__
 
 
 - Data Source of Austrian shapefiles
