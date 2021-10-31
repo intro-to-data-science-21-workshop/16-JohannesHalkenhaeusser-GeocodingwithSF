@@ -294,7 +294,13 @@ name: howto
 
 --
 
-**Important**: In case that the geocoded data comes from different sources (e.g. a shapefile and a list of addresses), make sure to use the same coordinate reference system code by specifying the CRS argument!
+**Important**: In case that the geocoded data comes from different sources (e.g. a shapefile and a list of addresses), make sure to use the same coordinate reference system code by specifying the **CRS argument**!
+
+<div align="center">
+<br>
+<img src="sf.png" height= 120>
+<img src="handshake.png" height= 120>
+<img src="pin.png" height= 120>
 
 ---
 class: inverse, center, middle
