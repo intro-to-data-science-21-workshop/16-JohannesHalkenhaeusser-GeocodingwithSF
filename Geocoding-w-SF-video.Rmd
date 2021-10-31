@@ -40,21 +40,33 @@ Geocoded_Frame <- geocode_OSM(c("Hertie School of Governance, Friedrichstrasse, 
 #how far away from home am I?
 st_distance(Geocoded_Frame$point[1], Geocoded_Frame$point[2])
 
+#get a line feature
+line_element <- Geocoded_Frame %>% 
+  st_coordinates() %>% 
+  sfheaders::sf_linestring()
+
 #we need some real world data
 data("World")
 
+# use the plot vs. view argument to make your map interactive
 tmap_mode('plot')
+
+#add the layer with the world map
 tm_shape(filter(World, iso_a3 == "DEU"))+
   tm_fill() +
   tm_borders() +
-tm_shape(Geocoded_Frame) +
-  tm_bubbles(col = "red", size = .025)
+  
+tm_shape(Geocoded_Frame) + # add the points to the map
+  tm_bubbles(col = "red", size = .025) + 
+  
+tm_shape(line_element) + # add the lines to the map 
+  tm_lines()
 
-## This map is pretty boring and ad-hoc. Let's work with something more advanced. 
+## This map is not so clear and ad-hoc. Let's work with something more advanced...
 
 ```
-We will get some data that includes spatial information.
-For our sample run we will use the legislator data base from Spain
+We will get data that includes spatial information from the legislatoR database.
+For our sample run we will use the legislator data base from Austria. 
 
 
 ```{r}
@@ -64,6 +76,7 @@ pol_aut <- get_political(legislature = 'aut')
 head(core_aut)
 
 #the birthplace and deathplace geocodes are not separated out yet. 
+#we identify the latitude and longitude 
 core_aut <- core_aut %>%
   separate(birthplace, into = c('bp_lat', 'bp_long'), sep = ",") %>%
   separate(deathplace, into = c('dp_lat', 'dp_long'), sep = ",") %>%
@@ -81,12 +94,14 @@ head(core_aut, 3)
 #drop NAs in geo data
 core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_lat")))
 
-
-reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$bp_lat)
+# reverse geocode the names of birthplaces.
+# But what if we care about the distribution and individual names don't tell us anything. 
+#reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$bp_lat)
 
 
 ```
 
+Let's use a shapefile from the internet with a higher resolution and more in depth information about the district levels. 
 ```{r Open Austria}
 
 # https://data-synergis.opendata.arcgis.com/datasets/SynerGIS::bezirksgrenzen-1250-000/explore?location=47.092207%2C14.608863%2C7.56
@@ -137,7 +152,7 @@ tm_bubbles(col = "red", size = .025)
 
 ```
 ## Get filled polygons
-Our map looks and all but what if we don't care about the individual legislators but more about the distribution of where most of them were born. 
+Our map looks good but what if we don't care about the individual legislators but more about the distribution of where most of them were born. (right now we might have overlapping features as we saw in the reverse coded example) 
 We can calculate how many legislators are in each of the polygone shapes 
 ```{r}
 
