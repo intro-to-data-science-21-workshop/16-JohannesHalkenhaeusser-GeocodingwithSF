@@ -34,7 +34,7 @@ library(rnaturalearth)
 #I can give OSM my relative address and Hertie's address
 Geocoded_Frame <- geocode_OSM(c("Hertie School of Governance, Friedrichstrasse, Berlin, Germany",
                                 "Rieslingstrasse, 69514 Laudenbach, Germany"), 
-                              as.sf= T,
+                              as.sf = T,
                               projection = 4326)
 
 #how far away from home am I?
@@ -48,14 +48,15 @@ line_element <- Geocoded_Frame %>%
 #we need some real world data
 data("World")
 
+qtm(World)
+
 # use the plot vs. view argument to make your map interactive
 tmap_mode('plot')
 
 #add the layer with the world map
 tm_shape(filter(World, iso_a3 == "DEU"))+
-  tm_fill() +
   tm_borders() +
-  
+  tm_fill() +
 tm_shape(Geocoded_Frame) + # add the points to the map
   tm_bubbles(col = "red", size = .025) + 
   
@@ -85,7 +86,7 @@ core_aut <- core_aut %>%
   mutate(dp_lat = parse_number(dp_lat)) %>%
   mutate(dp_long = parse_number(dp_long))
 
-head(core_aut, 3)
+head(core_aut, 10)
 
 ```
 
@@ -99,6 +100,7 @@ core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_
 #reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$bp_lat)
 
 
+head(reversed_results, 10)
 ```
 
 Let's use a shapefile from the internet with a higher resolution and more in depth information about the district levels. 
@@ -124,18 +126,6 @@ birthplaces_geo <- st_as_sf(core_aut_nona,
                       coords = c(x = "bp_long", y = "bp_lat"), 
                       crs = 4326)
 
-#get the deathplaces as sf 
-deathplaces_geo <- st_as_sf(core_aut_nona, 
-                      coords = c(x = "dp_long", y = "dp_lat"), 
-                      crs = 4326)
-
-geopoints <- cbind(birthplaces_geo, deathplaces_geo)
-
-
-#join birth and deathplaces with the austria map
-results_birthplace <- st_join(birthplaces_geo, oesterreich, join = st_within)
-results_deathplace <- st_join(deathplaces_geo, oesterreich, join = st_within)
-results_geopoints <- st_join(geopoints, oesterreich, join = st_within)
 
 ## How to use tmap 
 # https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
@@ -145,14 +135,14 @@ results_geopoints <- st_join(geopoints, oesterreich, join = st_within)
 tmap_mode("plot")
 tm_shape(oesterreich) +
   tm_polygons() +
-tm_fill(alpha = 1) +
-tm_shape(results_birthplace) +
-tm_bubbles(col = "red", size = .025)
-
+  tm_fill() +
+tm_shape(birthplaces_geo) +
+tm_bubbles(col = "red", size = .25, alpha = .1) ### We can use alpha to adjust the shading
 
 ```
 ## Get filled polygons
-Our map looks good but what if we don't care about the individual legislators but more about the distribution of where most of them were born. (right now we might have overlapping features as we saw in the reverse coded example) 
+Our map looks good but what if we don't care about the individual legislators but more about the distribution of where most of them were born, and we don't know anything about Austria so we want a bit of a more readable map
+(right now we might have overlapping features as we saw in the reverse coded example) 
 We can calculate how many legislators are in each of the polygone shapes 
 ```{r}
 
@@ -167,8 +157,9 @@ tm_shape(oesterreich_count) +
               palette = "Reds",
               id = "PB",
               title = "How many points were counted in each region") +
-  tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = TRUE) 
+  tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = T) 
 
+# con: we lose those legislators outside of Austria
 
 ```
 
