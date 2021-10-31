@@ -102,6 +102,10 @@ name: definition
 
 - You will see some examples at the end of the presentation and in the live coding part!
 
+<br>
+<div align = "center">
+<img src="pin.png" height= 200>
+
 ---
 
 # What is geocoding?
@@ -130,6 +134,24 @@ name: definition
   
   - Are there geographical patterns in the development of COVID-19 spread?
 
+
+---
+
+# A practical example
+
+<div align="center">
+<img src="corona_map.png" height= 500>
+
+Source: https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases
+
+---
+
+# ... and another one 
+
+<div align="center">
+<img src="US_2016.png" height= 500>
+
+Source: https://source.wustl.edu/2020/02/the-divide-between-us-urban-rural-political-differences-rooted-in-geography/
 
 ---
 class: inverse, center, middle
@@ -187,11 +209,11 @@ name: package
 
 --
 
-- These are represented by several simple features types (17 in total)
+- These are represented by several simple features types (17 in total), most commonly points, linestrings, and polygons
 
 --
 
-- Most common types: points, linestrings, polygons 
+<img src="shapes.png" height= 150>
 
 --
 
