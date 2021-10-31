@@ -319,5 +319,3 @@ tm_fill() +
 tm_shape(hertie_on_a_map) +
 tm_bubbles(col = "blue", size = 0.1)
 ```
-
----
