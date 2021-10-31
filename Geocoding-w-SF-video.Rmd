@@ -26,6 +26,7 @@ library(legislatoR)
 library(tm)
 library(OpenStreetMap)
 library(rnaturalearth)
+library(tmaptools)
 
 ```
 
@@ -72,7 +73,6 @@ For our sample run we will use the legislator data base from Austria.
 
 ```{r}
 core_aut <- get_core(legislature = 'aut')
-pol_aut <- get_political(legislature = 'aut')
 
 head(core_aut)
 
@@ -112,7 +112,7 @@ Let's use a shapefile from the internet with a higher resolution and more in dep
 
 #
 
-#read in shapefile 
+#read in shapefile: 1:250.000
 oesterreich <- st_read("data/Bezirke_250.shp")
 
 #first map
@@ -126,6 +126,7 @@ birthplaces_geo <- st_as_sf(core_aut_nona,
                       coords = c(x = "bp_long", y = "bp_lat"), 
                       crs = 4326)
 
+birthplaces_inAT <- st_join(oesterreich, birthplaces_geo, join = st_covers)
 
 ## How to use tmap 
 # https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
@@ -137,7 +138,7 @@ tm_shape(oesterreich) +
   tm_polygons() +
   tm_fill() +
 tm_shape(birthplaces_geo) +
-tm_bubbles(col = "red", size = .25, alpha = .1) ### We can use alpha to adjust the shading
+tm_bubbles(col = "red", size = .05, alpha = .1) ### We can use alpha to adjust the shading
 
 ```
 ## Get filled polygons
@@ -158,10 +159,22 @@ tm_shape(oesterreich_count) +
               id = "PB",
               title = "How many points were counted in each region") +
   tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = T) 
-
 # con: we lose those legislators outside of Austria
 
 ```
-
+```{r}
+tmap_mode("plot") # to make the map interactive use "view"
+tm_shape(oesterreich_count) + 
+  tm_polygons(col =  "counts",
+              n = 5,
+              palette = "Reds",
+              id = "PB",
+              title = "How many points were counted in each region") +
+  tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = T) +
+  
+## add the extra layer of the dots back onto the map 
+tm_shape(birthplaces_geo) +
+  tm_bubbles(size = 0.01)
+```
 
 
