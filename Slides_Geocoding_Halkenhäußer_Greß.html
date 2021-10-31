@@ -300,13 +300,16 @@ R&gt; hertie_geocoded &lt;- geocode_OSM(hertie, as.data.frame = T)
 
 --
 
-**Reading in the shapefile containing information about Berlin's borders and further vector features**
+**Preparing the shapefile containing information about Berlin's borders and further vector features**
 
 ```r
 R&gt; unzip("bezirksgrenzen.shp.zip", 
 +       exdir = "berlin_zip_shapefile", junkpaths = TRUE, 
 +       overwrite = TRUE)
 ```
+
+
+Source: https://daten.odis-berlin.de/de/dataset/bezirksgrenzen/
 
 ---
 #A practical application#
