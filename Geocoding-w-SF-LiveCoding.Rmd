@@ -1,0 +1,179 @@
+---
+title: "Geocoding with SF_Video"
+author: "Johannes M. Halkenhaeusser"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r Packages}
+
+library(tidyverse)
+library(sf)
+library(tmap)
+library(legislatoR)
+library(tm)
+library(OpenStreetMap)
+library(rnaturalearth)
+library(tmaptools)
+
+```
+
+```{r Basic Example with Hertie}
+#Let's say I want to find my home in relationship to Hertie
+#I can give OSM my relative address and Hertie's address
+Geocoded_Frame <- geocode_OSM(c("Hertie School of Governance, Friedrichstrasse, Berlin, Germany",
+                                "Rieslingstrasse, 69514 Laudenbach, Germany"), 
+                              as.sf = T,
+                              projection = 4326)
+
+#how far away from home am I?
+st_distance(Geocoded_Frame$point[1], Geocoded_Frame$point[2])
+
+#get a line feature
+line_element <- Geocoded_Frame %>% 
+  st_coordinates() %>% 
+  sfheaders::sf_linestring()
+
+#we need some real world data
+data("World")
+
+qtm(World)
+
+# use the plot vs. view argument to make your map interactive
+tmap_mode('plot')
+
+#add the layer with the world map
+tm_shape(filter(World, iso_a3 == "DEU"))+
+  tm_borders() +
+  tm_fill() +
+tm_shape(Geocoded_Frame) + # add the points to the map
+  tm_bubbles(col = "red", size = .025) + 
+  
+tm_shape(line_element) + # add the lines to the map 
+  tm_lines()
+
+## This map is not so clear and ad-hoc. Let's work with something more advanced...
+
+```
+We will get data that includes spatial information from the legislatoR database.
+For our sample run we will use the legislator data base from Austria. 
+
+
+```{r Prep of legislator database}
+core_aut <- get_core(legislature = 'aut')
+
+head(core_aut)
+
+#the birthplace and deathplace geocodes are not separated out yet. 
+#we identify the latitude and longitude 
+core_aut <- core_aut %>%
+  separate(birthplace, into = c('bp_lat', 'bp_long'), sep = ",") %>%
+  separate(deathplace, into = c('dp_lat', 'dp_long'), sep = ",") %>%
+  mutate(bp_lat = parse_number(bp_lat)) %>%
+  mutate(bp_long = parse_number(bp_long)) %>%
+  mutate(dp_lat = parse_number(dp_lat)) %>%
+  mutate(dp_long = parse_number(dp_long))
+
+head(core_aut, 10)
+
+```
+
+```{r Reverse Geocode}
+
+#drop NAs in geo data
+core_aut_nona <- drop_na(core_aut, any_of(c("bp_long", "bp_lat", "dp_long", "dp_lat")))
+
+# reverse geocode the names of birthplaces. 
+# !!! Warning the API limits your calls to 2500 request a day and at most 1 per sec!! 
+# But what if we care about the distribution and individual names don't tell us anything?
+reversed_results <- rev_geocode_OSM(x = core_aut_nona$bp_long,y= core_aut_nona$bp_lat)
+
+#check out those nice addresses. This should be helpful if you are Austrian. But what if you aren't...?
+head(reversed_results, 10)
+```
+
+Let's use a shapefile from the internet with a higher resolution and more in depth information about the district levels. Let's visualise the data rather than translate it into addresses. 
+```{r Austrian Legislators}
+
+# https://data-synergis.opendata.arcgis.com/datasets/SynerGIS::bezirksgrenzen-1250-000/explore?location=47.092207%2C14.608863%2C7.56
+
+# https://www.infoworld.com/article/3505897/how-to-do-spatial-analysis-in-r-with-sf.html
+
+#
+
+#read in shapefile: 1:250.000
+oesterreich <- st_read("data/Bezirke_250.shp")
+
+#first map
+qtm(oesterreich)
+
+#figure out the crs key
+st_crs(oesterreich)
+
+#get the birthplaces as sf 
+birthplaces_geo <- st_as_sf(core_aut_nona, 
+                      coords = c(x = "bp_long", y = "bp_lat"), 
+                      crs = 4326)
+
+birthplaces_inAT <- st_join(oesterreich, birthplaces_geo, join = st_covers)
+
+## How to use tmap 
+# https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
+
+
+#draw the austria maps
+tmap_mode("plot")
+tm_shape(oesterreich) +
+  tm_polygons() +
+  tm_fill() +
+tm_shape(birthplaces_geo) +
+tm_bubbles(col = "red", size = .05, alpha = .1) ### We can use alpha to adjust the shading
+
+```
+## Get filled polygons
+Our map looks good but what if we don't care about the individual legislators but more about the distribution of where most of them were born, and we don't know anything about Austria so we want a bit of a more readable map
+(right now we might have overlapping features as we saw in the reverse coded example) 
+We can calculate how many legislators are in each of the polygone shapes 
+```{r Filled polygon map}
+
+#we use the st_intersects
+oesterreich_count <-  oesterreich %>% 
+  mutate(counts = lengths(st_intersects(., birthplaces_geo)))
+
+tmap_mode("plot") # to make the map interactive use "view"
+tm_shape(oesterreich_count) + 
+  tm_polygons(col =  "counts",
+              n = 5,
+              palette = "Reds",
+              id = "PB",
+              title = "How many points were counted in each region") +
+  tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = T) 
+# con: we lose those legislators outside of Austria
+
+```
+```{r Polygon filled with dots}
+tmap_mode("plot") # to make the map interactive use "view"
+tm_shape(oesterreich_count) + 
+  tm_polygons(col =  "counts",
+              n = 5,
+              palette = "Reds",
+              id = "PB",
+              title = "How many points were counted in each region") +
+  tm_text("PB", size = "AREA",scale = .5, style = "log10_pretty", remove.overlap = T) +
+  
+## add the extra layer of the dots back onto the map 
+tm_shape(birthplaces_geo) +
+  tm_bubbles(size = 0.01)
+```
+
+
