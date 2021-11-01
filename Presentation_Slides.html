@@ -3,12 +3,12 @@
   <head>
     <title>Geocoding with sf</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Carlo Greß and Johannes Halkenhäusser" />
+    <meta name="author" content="Carlo Greß and Johannes Halkenhäußer" />
     <meta name="date" content="2021-11-04" />
-    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
-    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
-    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <script src="slides/header-attrs/header-attrs.js"></script>
+    <link href="slides/remark-css/default.css" rel="stylesheet" />
+    <link href="slides/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="slides/remark-css/metropolis-fonts.css" rel="stylesheet" />
   </head>
   <body>
     <textarea id="source">
@@ -16,28 +16,42 @@ class: center, middle, inverse, title-slide
 
 # Geocoding with sf
 ## Introduction to Data Science Workshop
-### Carlo Greß and Johannes Halkenhäusser
+### Carlo Greß and Johannes Halkenhäußer
 ### Hertie School
 ### 4 November 2021
 
 ---
 
 
-# Table of contents
 
-&lt;br&gt;
+
+
+# Structure
+
+--
 
 1. [What is geocoding?](#definition)
 
-2. [Geocoding in R](#application)
+--
+
+2. [Data requirements](#requirements)
+
+--
 
 3. [The **s**imple **f**eatures package in R](#package)
 
-4. [How to use the sf package for geocoding](#howto)
+--
 
-5. [A practical application](#application)
+4. [What can sf do?](#ability)
 
-6. [Summary](#summary)
+--
+
+5. [How do sf and geocoding interact](howto)
+
+--
+
+6. [A practical application](#application)
+
 
 ---
 class: inverse, center, middle
@@ -48,19 +62,51 @@ name: definition
 ---
 # What is geocoding?
 
-- Turning addresses or locations into geographic positions 
+--
+
+- Turning (text-based) addresses or locations into geographic positions
+
+--
 
 - Location of the Hertie School (Friedrichsstraße 180, 10117 Berlin) -&gt; 52.512963808601505, 13.389202140609111
 
+--
+
+- In a broader sense, geocoding is one central aspect of working with spatial data 
+
+--
+
+- Once the data of interested is geocoded, it can be used for further spatial analysis
+
+--
+
+- You will see some examples at the end of the presentation and in the live coding part!
+
+&lt;br&gt;
+&lt;div align = "center"&gt;
+&lt;img src="pin.png" height= 200&gt;
+
+---
+
+# What is geocoding?
+
+--
+
 - The geographic position is commonly expressed in **latitude** and **longitude**
+
+--
 
   - Latitude refers to the north-south position of a point 
 
   - Longitude refers to the east-west position of a point
+  
+--
 
 - **Reverse-geocoding** takes given coordinates and translates them into an address
 
-- Both types of geocoding are helpful whenever the location of variables is at the center of attention: 
+--
+
+- Both types of geocoding are helpful whenever **location** is at the center of attention: 
 
   - Where do legislators have their offices?
   
@@ -70,27 +116,59 @@ name: definition
 
 
 ---
-class: inverse, center, middle
-name: application
 
-# Geocoding in R
+# A practical example
+
+&lt;div align="center"&gt;
+&lt;img src="corona_map.png" height= 500&gt;
+
+Source: https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases
 
 ---
-# Geocoding in R
 
-- Before starting with the substantial analysis, input data needs to be read in into R
+# ... and another one 
+
+&lt;div align="center"&gt;
+&lt;img src="US_2016.png" height= 500&gt;
+
+Source: https://source.wustl.edu/2020/02/the-divide-between-us-urban-rural-political-differences-rooted-in-geography/
+
+---
+class: inverse, center, middle
+name: requirements
+
+# Data requirements
+
+---
+# Data requirements
+
+--
+
+- Before starting with the substantial analysis, input data needs to be read into R
+
+--
 
 - Geocoding analysis distinguishes between two main input data types: **Relative** and **absolute** input data 
+
+--
 
 - Relative input data refers to **descriptions** of locations and cannot directly be translated into precise geographic data points
 
   - Instead, reference locations whose coordinates are known are used for approximation
   
+--
+  
 - Absolute input data refers to data that can be directly translated into coordinates
 
   - Postal addresses and ZIP codes, cities, places
   
+--
+  
 - Unsurprisingly, the latter data format is usually desired due to a more intuitive use and higher precision
+
+--
+
+- If we want to plot a geographical data point on a map, we need another data input: **shapefiles**
 
 ---
 class: inverse, center, middle
@@ -101,32 +179,108 @@ name: package
 ---
 # The **s**imple **f**eatures package in R
 
+--
+
 - Simple features is not limited to the package in R, but rather is a formal standard describing the geographic representation of real-world objects in computers 
+
+--
 
 - A **feature** commonly relates to such real-world objects, e.g. a street, a city, or a building
 
-- These are represented by several simple features types
+--
 
-- Most common types: points, linestrings, polygons 
+- These are represented by several simple features types (17 in total), most commonly points, linestrings, and polygons
 
-- The simple features package in R provides access to the simple feature standard
+--
+
+&lt;img src="shapes.png" height= 150&gt;
+
+--
+
+- The sf package in R provides access to the simple feature standard and reformats geocoded data into the different sf types
+
+--
 
 - It offers multiple functions that are beneficial for working with geodata
 
   - Calculating surface area or distance, identifying whether a point lays in a given area, creating a point at the centre of an area
 
+
+---
+class: inverse, center, middle
+name: ability
+
+# What can sf do?
+
+---
+#What can sf do?
+
+sf's functions can be broadly split up into five sections: 
+
+--
+
+- **Geometric confirmation**
+
+  - Are point x and y the same (`st_equals`)? Does point x lie in a given area/polygon (`st_contains`)?
+
+--
+
+- **Geometric operation**
+
+  - Creating a point that lies in the center of a given area/polygon (`st_centroid`)
+  
+--
+
+- **Geometry creation**
+
+  - Create a (triangular) polygon made from given points (`st_triangulate`)
+  
+--
+
+- **Geometry operations**
+
+  - Create a geometry that contains the shared area of two given areas (`st_intersect`) 
+  
+--
+
+- **Geometric measurement**
+
+  - Calculating the distance between points/areas (`st_distance`)
+
 ---
 class: inverse, center, middle
 name: howto
 
-# How to use the sf package for geocoding
+# How do sf and geocoding interact?
 
 ---
-#How to use the sf package for geocoding
+#How do sf and geocoding interact?
 
-- Read in the **input data** (for example, your address or the postal code of your home town) 
+--
+
+- Read in the **input data** (for example, your address or the postal code of your home town)
+
+--
+
 - For this purpose, numerous sources as the *Open Street Map* or the Google Maps API can be used
-- The build-in `st_read`-command enables users to read in existing datasets and stores them as data.frame
+
+--
+
+- The build-in `st_read`-command enables users to read in existing geocoded datasets and converts them to sf objects
+
+--
+
+- Geocoded data that is in sf format can then be mapped, e.g. one could map a point on a given area
+
+--
+
+**Important**: In case that the geocoded data comes from different sources (e.g. a shapefile and a list of addresses), make sure to use the same coordinate reference system code by specifying the **CRS argument**!
+
+&lt;div align="center"&gt;
+&lt;br&gt;
+&lt;img src="sf.png" height= 120&gt;
+&lt;img src="handshake.png" height= 120&gt;
+&lt;img src="pin.png" height= 120&gt;
 
 ---
 class: inverse, center, middle
@@ -135,19 +289,76 @@ name: application
 # A practical application
 
 ---
-class: inverse, center, middle
-name: summary
+#A practical application
 
-# Summary
+**Geocoding the Hertie School's address with the `geocode_OSM` function frome the `tmap`-library**
+
+```r
+R&gt; hertie &lt;- ("Friedrichsstraße 180, 10117 Berlin")
+R&gt; hertie_geocoded &lt;- geocode_OSM(hertie, as.data.frame = T)
+```
+
+--
+
+**Preparing the shapefile containing information about Berlin's borders and further vector features**
+
+```r
+R&gt; unzip("bezirksgrenzen.shp.zip", 
++       exdir = "berlin_zip_shapefile", junkpaths = TRUE, 
++       overwrite = TRUE)
+```
+
+
+Source: https://daten.odis-berlin.de/de/dataset/bezirksgrenzen/
 
 ---
+#A practical application#
+
+**Transforming both the shapefile and the geocoded address to sf objects and joining them**
+
+```r
+R&gt; berlin &lt;- st_read("berlin_zip_shapefile//bezirksgrenzen.shp")
+```
+
+```
+## Reading layer `bezirksgrenzen' from data source 
+##   `C:\Users\carlo\Dokumente\GitHub\16-JohannesHalkenhaeusser-GeocodingwithSF\berlin_zip_shapefile\bezirksgrenzen.shp' 
+##   using driver `ESRI Shapefile'
+## Simple feature collection with 12 features and 6 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 13.08835 ymin: 52.33825 xmax: 13.76116 ymax: 52.67551
+## Geodetic CRS:  WGS 84
+```
+
+```r
+R&gt; hertie_point &lt;- st_as_sf(hertie_geocoded, coords = c(x = "lon", y = "lat"), crs = 4326)
+R&gt; 
+R&gt; hertie_on_a_map &lt;- st_join(hertie_point, berlin, join = st_within)
+```
+
+---
+#A practical application
+
+**Plotting a map of Berlin including the location of Hertie School**
+
+```r
+R&gt; tm_shape(berlin) +
++ tm_fill() +
++ tm_shape(hertie_on_a_map) +
++ tm_bubbles(col = "blue", size = 0.1)
+```
+
+![](Presentation_Slides_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"hash": true
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
